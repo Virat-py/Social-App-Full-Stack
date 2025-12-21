@@ -1,58 +1,35 @@
 import uvicorn
-from fastapi import FastAPI,HTTPException
-from app.db import init_db,get_connection
-from app.schemas import PostCreate
+from fastapi import FastAPI,Depends
+from db import init_db,get_connection
+from schemas import PostCreate,UserCreate
+from auth import register_user,login_user,validate_user
+from services import get_from_db,create_to_db,delete_from_db
 
 app = FastAPI()
 init_db()
 
-@app.get("/get_data")
-def get_posts(id: int | None = None):
-    conn = get_connection()
-    cursor = conn.cursor()
+@app.post("/register")
+def register(user:UserCreate):
+    register_user(user.user_id,user.password)
+    return {"message":"User registered successfully"}
 
-    if id is None:
-        cursor.execute("SELECT * FROM posts")
-        rows = cursor.fetchall()
-        conn.close()
-        return [dict(row) for row in rows]
+@app.post("/login")
+def login(user:UserCreate):
+    access_token= login_user(user.user_id,user.password)
+    return {"access_token": access_token, "token_type":"bearer"}
 
-    cursor.execute("SELECT * FROM posts WHERE id = ?", (id,))
-    row = cursor.fetchone()
-    conn.close()
-
-    if not row:
-        raise HTTPException(status_code=404, detail="Post not found")
-
-    return dict(row)
-
+@app.get("/posts")
+def get_posts(user_id:str=Depends(validate_user)):
+    return get_from_db()
 
 @app.post("/create_post")
-def create_post(post:PostCreate):
-    conn = get_connection()
-    cursor = conn.cursor()
+def create_post(post:PostCreate,user_id:str=Depends(validate_user)):
+    return create_to_db(post.title,post.content,user_id)
 
-    cursor.execute(
-        "INSERT INTO posts (title, content) VALUES (?, ?)",
-        (post.title, post.content)
-    )
-    conn.commit()
-    conn.close()
-
-    return {"message": "Post created"}
-
-@app.delete("/delete_post")
-def create_post(id:int):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "DELETE FROM posts WHERE id=?",
-        (id,)
-    )
-    conn.commit()
-    conn.close()
-
-    return {"message": "Post deleted"}
+@app.delete("/delete_post/{post_id}")
+def delete_post(post_id:int,user_id:str=Depends(validate_user)):
+    return delete_from_db(post_id,user_id)
 
 
+if __name__=="__main__":
+    uvicorn.run("main:app", host="0.0.0.0",port=8000, reload=True)
