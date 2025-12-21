@@ -5,6 +5,10 @@ build/
 dist/
 wheels/
 *.egg-info
+*.db
+
+backend/app/test.http
+backend/app/posts.db
 
 # Virtual environments
 .venv
