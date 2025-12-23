@@ -50,7 +50,9 @@ export function PostsLayout() {
     }
 
     // decode user_id from JWT
-    const payload = JSON.parse(atob(token.split(".")[1]));
+    const payload = JSON.parse(
+      atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+    );
     setCurrentUser(payload.sub);
 
     fetch("http://127.0.0.1:8000/posts", {

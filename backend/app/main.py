@@ -19,7 +19,8 @@ init_db()
 @app.post("/register")
 def register(user:UserCreate):
     register_user(user.user_id,user.password)
-    return {"message":"User registered successfully"}
+    access_token= login_user(user.user_id,user.password)
+    return {"access_token": access_token, "token_type":"bearer"}
 
 @app.post("/login")
 def login(user:UserCreate):

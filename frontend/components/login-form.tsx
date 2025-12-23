@@ -13,6 +13,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const register = async () => {
@@ -24,6 +25,10 @@ export function LoginForm({
         password: password,
       }),
     });
+    if (res.status === 403) {
+      setError("Error: Username already in use");
+      return;
+    }
 
     if (!res.ok) {
       console.error("Login failed");
@@ -49,7 +54,10 @@ export function LoginForm({
         password: password,
       }),
     });
-
+    if (res.status === 401) {
+      setError(`Error: Incorrect password for ${userId}`);
+      return;
+    }
     if (!res.ok) {
       console.error("Login failed");
       return;
@@ -74,9 +82,14 @@ export function LoginForm({
         </CardHeader>
         <CardContent>
           <form onSubmit={(e) => e.preventDefault()}>
+            {error && (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                {error}
+              </div>
+            )}
             <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="user_id">User Name</FieldLabel>
+              <Field >
+                <FieldLabel htmlFor="user_id" className="mt-4">User Name</FieldLabel>
                 <Input
                   id="user_id"
                   type="user_id"
