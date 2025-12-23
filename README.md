@@ -11,12 +11,9 @@
 
 ---
 
-## Overview
+## User Interface
 
-This project is a full-stack application with authentication and post management.
-
-The backend exposes a REST API secured with JWTs.  
-The frontend consumes the API using `fetch`, stores the token in `localStorage`, and handles redirects on unauthorized access.
+![image alt](https://github.com/Virat-py/Social-App-Full-Stack/blob/79a1d7fc46dc5cd6afcf495dd352ca722d81c837/ui.png)
 
 ---
 
