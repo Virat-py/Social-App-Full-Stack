@@ -24,7 +24,7 @@ def register_user(user_id: str, password: str):
         conn.close()
     except sqlite3.IntegrityError:
         conn.close()
-        raise HTTPException(400, "Username already exists")
+        raise HTTPException(403, "Username already exists")
 
 
 def login_user(user_id: str, password: str):

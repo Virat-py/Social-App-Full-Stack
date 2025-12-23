@@ -9,6 +9,7 @@ wheels/
 
 backend/app/test.http
 backend/app/posts.db
+backend/app/test.py
 
 # Virtual environments
 .venv
