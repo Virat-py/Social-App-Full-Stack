@@ -46,7 +46,7 @@
 - `POST /create_post`
 - `DELETE /delete_post/{post_id}`
 
-All protected routes require a valid JWT.
+All protected routes require a valid JWT token.
 
 ---
 
